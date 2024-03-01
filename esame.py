@@ -46,28 +46,28 @@ class CSVTimeSeriesFile:
                     #lo "pulisco" dai caratteri newline e dagli spazi
                     try:
                       elements[1] = int(float(elements[1].strip()))
-                      #se il numero di passeggeri è negativo (impossibile) alzo un'eccezione
-                      if elements[1] < 0:
-                        raise ExamException('Errore: numero di passeggeri non valido')
-                    #se il valore non è convertibile a numero allora non è valido, quindi alzo un'eccezione
+                    #se il valore non è convertibile a numero allora non è valido, ignoro la riga
                     except ValueError:
-                        raise ExamException('Errore: numero passeggeri non valido')
+                        continue
+                    #se il numero di passeggeri è negativo ignoro la riga
+                    if elements[1] < 0:
+                      continue
                     #controllo che il primo elemento sia di tipo data
                     #mi assicuro che ci sia un solo trattino (tramite la funzione count che conta le occorrenze), che sia all'indice -3 e 
-                    #che il suo indice sia maggiore di zero (quindi che non sia all'inizio), se le condizioni non sono rispettate alzo un'eccezione
+                    #che il suo indice sia maggiore di zero (quindi che non sia all'inizio), se le condizioni non sono rispettate ignoro la riga
                     if not (elements[0].count('-') == 1 and elements[0][-3] == '-' and elements[0].index('-') > 0):
-                        raise ExamException('Errore: data non valida')
+                        continue
                     #visto che in elements[0] sono presenti sia anno che mese, li separo in due attributi diversi
                     anno = elements[0].split('-')[0]
                     mese = elements[0].split('-')[1]
-                    #mi assicuro che nella parte dell'anno non ci siano caratteri non numerici
+                    #mi assicuro che nella parte dell'anno non ci siano caratteri non numerici, altrimenti ignoro la riga
                     try:
                       int(anno)
                     except ValueError:
-                      raise ExamException('Errore: data non valida')
-                    #mi assicuro che il mese sia uno dei valori ammissibili, altrimenti alzo un'eccezione
+                      continue
+                    #mi assicuro che il mese sia uno dei valori ammissibili, altrimenti salto la riga
                     if not mese in ["01","02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]:
-                        raise ExamException('Errore: data non valida')
+                        continue
                     #se la lunghezza della lista è 0 allora aggiungo elements (succederà solo nella prima iterazione)
                     if len(time_series) == 0:
                       time_series.append(elements)
